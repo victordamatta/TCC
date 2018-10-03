@@ -1,0 +1,16 @@
+\chapter{Representação de sequências}
+\label{cap:sequencias}
+
+Como visto no capítulo \ref{cap:florestas}, desejamos uma representação eficiente de sequências que suporte as operações de concatenação e fatiamento. Uma solução simples é representar uma sequência com uma lista ligada e realizar as operações em $O(n)$, onde $n$ é o tamanho da maior sequência. Entretanto, apresentamos uma maneira que utiliza árvores de busca binária balanceadas, reduzindo o tempo das operações para $O(\log n)$.
+
+\section{Árvores de busca binária balanceadas implícitas}
+
+Numa árvore de busca binária balanceada, ou ABBB, todo elemento possui uma chave. Ao se tratar de uma sequência, as chaves dos elementos serão as posições dos elementos na sequência, que serão armazenadas de forma implícita. Cada nó da árvore guarda, ao invés de uma chave, o tamanho de sua subárvore. 
+
+Uma treap, também conhecida como árvore cartesiana, é uma árvore de busca binária aleatorizada. Tem implementação relativamente simples quando comparada à árvores rubros-negras ou AVLs. Duas operações primitivas em treaps se mostram suficientes para realizar a maioria das operações.
+\begin{itemize}
+    \item divide(T, chave)
+    \item concatena($T_1$, $T_2$)
+\end{itemize}
+
+Cada nó de uma treap guarda uma \textit{chave} e uma \textit{prioridade}. As chaves respeitam a estrutura de uma árvore de busca binária, enquanto as prioridades respeitam a estrutura de um \textit{max-heap}.
