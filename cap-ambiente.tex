@@ -1,0 +1,56 @@
+% !TEX root = monografia.tex
+\chapter{Ambiente}
+\label{cap:ambiente}
+
+O ambiente utilizado no trabalho foi o ELF (?).
+Criado para a pesquisa em IA, sua escolha propõe múltiplos benefícios: 
+proporciona todos os desafios característicos de jogos RTS,
+dispensa das complexidades irrelevantes para pesquisa que estão presentes em jogos destinados para o mercado,
+é integrado com uma framework de Aprendizado de Reforço, baseada em PyTorch (?),
+faz um uso altamente eficiente dos recursos computacionais,
+e, por último, proporciona alto grau de controle para o usuário.
+
+O jogo consiste de dois jogadores 
+disputando por recursos, 
+construindo unidades 
+e as controlando 
+com o objetivo final de destruir a base do adversário.
+Mais precisamente, 
+cada jogador começa com sua base em cantos opostos de um mapa quadricular,
+que contém fontes de recursos. 
+É importante ressaltar que os jogadores só tem visão do que está suficiente próximo de suas unidades 
+(mas independentemente disso, possuem conhecimento da localização da base inimiga).
+
+O estado disponível para os algoritmos (respeitando a área de visão) é uma discretização do mapa em uma grid 20x20,
+e a informação é distribuída em múltiplos canais, 
+primeiro revelando a posição de unidades de cada tipo, 
+depois o HP 
+e por fim um canal que representa as fontes de recursos.
+
+\begin{table}[]
+    \caption{Tabela de Ações}
+    \begin{tabular}{|l|p{8cm}|}
+    \hline
+    Comando              & Descrição                                                                                       \\
+    \hline
+    INATIVO              & Não faz nada                                                                                    \\
+    \hline
+    CONSTRÓI-TRABALHADOR & Se a base está inativa, constrói um trabalhador.                                                \\
+    \hline
+    CONSTRÓI-QUARTEL     & Move um trabalhador (coletando ou inativo) para um lugar vazio e constrói um quartel.           \\
+    \hline
+    CONSTRÓI-GLADIADOR   & Se existe um quartel inativo, constrói um gladiador.                                            \\
+    \hline
+    CONSTRÓI-TANQUE      & Se existe um quartel inativo, constrói um tanque.                                               \\
+    \hline
+    BATER-E-CORRER       & Se existem tanques, move eles em direção a base inimiga e ataca, fuja se forem contra atacados. \\
+    \hline
+    ATACAR               & Gladiadores e tanques atacam a base inimiga.                                                    \\
+    \hline
+    ATACAR EM ALCANCE    & Gladiadores e tanques atacam inimigos a vista.                                                  \\
+    \hline
+    TODOS A DEFESA       & Gladiadores e tanques atacar tropas inimigas perto da base ou da fonte de recursos.             \\
+    \hline
+    \end{tabular}
+\end{table}
+

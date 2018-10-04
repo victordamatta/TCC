@@ -46,6 +46,7 @@
 \usepackage{seqsplit}
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{amsfonts}
 
 % ------------ Comandos Gabriel
 \newtheorem{prop}[figure]{Proposição}
@@ -249,10 +250,12 @@ língua portuguesa.
 % cabeçalho para as páginas de todos os capítulos
 \fancyhead[RE,LO]{\thesection}
 
-\singlespacing              % espaçamento simples
-%\onehalfspacing            % espaçamento um e meio
+%\singlespacing              % espaçamento simples
+\onehalfspacing            % espaçamento um e meio
 
 \input cap-introducao        % associado ao arquivo: 'cap-introducao.tex'
+\input cap-reforco
+\input cap-ambiente
 \input cap-desenvolvimentos  % associado ao arquivo: 'cap-desenvolvimento.tex'
 \input cap-conclusoes        % associado ao arquivo: 'cap-conclusoes.tex'
 \input cap-definicoes
