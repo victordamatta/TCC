@@ -19,16 +19,19 @@ Mais precisamente,
 cada jogador começa com sua base em cantos opostos de um mapa quadricular,
 que contém fontes de recursos. 
 É importante ressaltar que os jogadores só tem visão do que está suficiente próximo de suas unidades 
-(mas independentemente disso, possuem conhecimento da localização da base inimiga).
+(e conhecimento da localização da base inimiga), isso significa que se trata de um problema de \textit{informação parcial}.
 
-O estado disponível para os algoritmos (respeitando a área de visão) é uma discretização do mapa em uma grid 20x20,
-e a informação é distribuída em múltiplos canais, 
+A observação do estado é uma discretização do mapa em uma grid 20x20,
+e a informação é distribuída em múltiplos canais (respeitando a área de visão), 
 primeiro revelando a posição de unidades de cada tipo, 
 depois o HP 
 e por fim um canal que representa as fontes de recursos.
 
-\begin{table}[]
-    \begin{tabular}{|l|p{8cm}|}
+As ações disponíveis para os agentes são as mesmas em todos os estados, e estão descritas na tabela~\ref{tab:acoes}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
     \hline
     Comando              & Descrição                                                                                       \\
     \hline
@@ -50,7 +53,8 @@ e por fim um canal que representa as fontes de recursos.
     \hline
     TODOS A DEFESA       & Gladiadores e tanques atacar tropas inimigas perto da base ou da fonte de recursos.             \\
     \hline
-    \caption{Tabela de Ações}
-    \end{tabular}
+\end{tabular}
+\end{center}
+\caption{Ações}
+\label{tab:acoes}
 \end{table}
-
