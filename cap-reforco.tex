@@ -3,15 +3,21 @@
 \label{cap:reforco}
 
 Aprendizado de Reforço é uma das grandes áreas que compõe Aprendizado de Máquina (?),
-onde são estudados algoritmos que funcionam como \textit{agentes} em um \textit{ambiente},
+onde são estudados algoritmos que descrevem o comportamento de \textit{agentes} em um \textit{ambiente},
 buscando o maior \textit{retorno} por suas ações.
+
+\begin{figure}
+    \centering
+        \includegraphics[width=5cm]{figuras/rl}
+    \caption{Ilustração de Aprendizado de Reforço}
+\end{figure}
 
 Essa definição geral admite aplicação em uma grande quantidade de problemas (?),
 sendo limitada principalmente pela existência de um ambiente que possa ser eficientemente simulado durante o processo de aprendizado do algoritmo.
 Consequentemente, o aprendizado muitas vezes depende de uma quantidade grande de recursos computacionais.
 
 Geralmente, os problemas da área são formulados como Processos de Decisão de Markov (MDP) finitos(?).
-Um Processo de Decisão de Markov é uma 4-upla $(S,A,T,\gamma)$(?), onde:
+Um Processo de Decisão de Markov é uma quadrupla $(S,A,T,\gamma)$(?), onde:
 \begin{itemize}
     \item $S$ é o conjunto de estados (que representa o ambiente)
     \item $A$ é o conjunto de ações que o agente pode tomar
