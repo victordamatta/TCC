@@ -1,13 +1,14 @@
 import os
 import sys
 from rlpytorch import *
+import torch.nn as nn
 
-class Agent:
+class Agent(nn.Module):
     def __init__(self, verbose=False, actor_name="actor"):
         ''' Initialization for Trainer. Accepted arguments: ``num_games``, ``batch_size``
             Also need arguments for `Evaluator` and `ModelSaver` class.
         '''
-        pass
+        super(Agent, self).__init__()
 
     def actor(self, batch):
         ''' Actor.

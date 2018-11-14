@@ -48,7 +48,7 @@
 \usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{float}
-
+\usepackage{algpseudocode}
 
 % ------------ Comandos Gabriel
 \newtheorem{prop}[figure]{Proposição}
@@ -128,18 +128,17 @@ framexrightmargin=10pt
 
 
     \vspace*{3cm}
-    \Large{Nome completo do Autor}
+    \Large{Victor Aliende da Matta}
     
 
     \vspace{3cm}
-    \textbf{\Large{Título da monografia \\
-    se for longo ocupa esta linha também}}
+    \textbf{\Large{Jogando RTS com Aprendizado de Reforço Profundo}}
     
        
     \vskip 5cm
     \normalsize{São Paulo}
 
-    \normalsize{Dezembro de 2015}
+    \normalsize{Dezembro de 2018}
 \end{center}
 
 % ---------------------------------------------------------------------------- %
@@ -149,8 +148,7 @@ framexrightmargin=10pt
 \thispagestyle{empty}
     \begin{center}
         \vspace*{2.3 cm}
-        \textbf{\Large{Título da monografia \\
-    se for longo ocupa esta linha também}}
+        \textbf{\Large{Jogando RTS com Aprendizado de Reforço Profundo}}
         \vspace*{2 cm}
     \end{center}
 
@@ -164,13 +162,12 @@ framexrightmargin=10pt
     \vskip 5cm
 
     \begin{center}
-    Supervisor: Prof. Dr. Nome do Supervisor\\
-    $[$ Cosupervisor: Prof. Dr. Nome do Cosupervisor $]$
+    Supervisor: Prof. Dr. Denis Deratani Mauá
 
     \vskip 5cm
     \normalsize{São Paulo}
 
-    \normalsize{Dezembro de 2015}
+    \normalsize{Dezembro de 2018}
     \end{center}
 \pagebreak
 
@@ -194,14 +191,10 @@ framexrightmargin=10pt
 % Resumo
 \chapter*{Resumo}
 
-Elemento obrigatório, constituído de uma sequência de frases concisas e
-objetivas, em forma de texto.  Deve apresentar os objetivos, métodos empregados,
-resultados e conclusões.  O resumo deve ser redigido em parágrafo único, conter
-no máximo 500 palavras e ser seguido dos termos representativos do conteúdo do
-trabalho (palavras-chave).
+Neste trabalho, introduzimos a área de Aprendizado de Reforço Profundo. Tomando um jogo de estratégia em tempo real como ambiente de exemplo, estudamos o algoritmo Actor-Critic junto com Redes Neurais Convolucionais.
 \\
 
-\noindent \textbf{Palavras-chave:} palavra-chave1, palavra-chave2, palavra-chave3.
+\noindent \textbf{Palavras-chave:} Aprendizado de Reforço, Aprendizado Profundo, Jogos de estratégia em tempo real.
 
 % ---------------------------------------------------------------------------- %
 % Abstract
@@ -256,18 +249,19 @@ língua portuguesa.
 \onehalfspacing            % espaçamento um e meio
 
 \input cap-introducao        % associado ao arquivo: 'cap-introducao.tex'
-\input cap-reforco
-\input cap-ambiente
-\input cap-desenvolvimentos  % associado ao arquivo: 'cap-desenvolvimento.tex'
-\input cap-conclusoes        % associado ao arquivo: 'cap-conclusoes.tex'
-\input cap-definicoes
+\input cap-descricao
+\input cap-solucao
+\input cap-modelo
+\input cap-otimizacao
+%\input cap-resultados
+%\input cap-conclusao
 
 % cabeçalho para os apêndices
 \renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\appendixname\ \thechapter}} {\MakeUppercase{#1}} }
 \fancyhead[RE,LO]{}
 \appendix
 
-\include{ape-exemplo}      % associado ao arquivo: 'ape-exemplo.tex'
+%\include{ape-exemplo}      % associado ao arquivo: 'ape-exemplo.tex'
 
 
 % ---------------------------------------------------------------------------- %

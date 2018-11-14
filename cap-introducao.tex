@@ -2,40 +2,21 @@
 \chapter{Introdução}
 \label{cap:introducao}
 
-Uma monografia deve ter um capítulo inicial que é a Introdução e um
-capítulo final que é a Conclusão. Entre esses dois capítulos poderá
-ter uma sequência de capítulos que descrevem o trabalho em detalhes.
-Após o capítulo de conclusão, poderá ter apêndices e ao final deverá
-ter as referências bibliográficas.
+Esse trabalho se propõe a ser uma introdução a Aprendizado de Reforço, enviesado para a compreensão de alguns resultados mais recentes na área (?) que, seguindo a tendência de outras áreas dentro de Aprendizado de Máquina (?), utilizam redes neurais para aproximação de funções.
 
+\begin{figure}
+    \centering
+        \includegraphics[width=5cm]{figuras/rl}
+    \caption{Ilustração de Aprendizado de Reforço}
+    \label{fig:rl}
+\end{figure}
 
-Para a escrita de textos em Ciência da Computação, o livro de Justin Zobel, 
-\emph{Writing for Computer Science} \citep{zobel:04} é uma leitura obrigatória. 
-O livro \emph{Metodologia de Pesquisa para Ciência da Computação} de 
-\citet{waz:09} também merece uma boa lida.
+Aprendizado de Reforço (AR) é uma das grandes áreas que compõe Aprendizado de Máquina (?),
+onde são estudados algoritmos que descrevem o comportamento de \textit{agentes} em um \textit{ambiente},
+buscando o maior \textit{retorno} por suas ações (ilustrado na figura~\ref{fig:rl}).
 
-O uso desnecessário de termos em lingua estrangeira deve ser evitado. No entanto,
-quando isso for necessário, os termos devem aparecer \emph{em itálico}.
+Essa definição geral admite aplicação em uma grande quantidade de problemas (?), 
+necessitando somente de um ambiente onde o algoritmo possa eficientemente agir e observar a consequência de suas ações. A princípio, não é necessário que o algoritmo seja treinado no mesmo ambiente que ele é ultimamente aplicado, por exemplo, em Robótica, onde o treinamento do algoritmo em um cenário real seria lento e apresentaria riscos para o equipamento, é comum utilizar simulações computacionais do ambiente (que naturalmente introduz outra série de desafios). O maior obstáculo portanto da aplicação de algoritmos de Aprendizado de Reforço tende a ser a quantidade de recursos computacionais necessários para o treinamento.
 
-\begin{small}
-\begin{verbatim}
-Modos de citação:
-indesejável: [AF83] introduziu o algoritmo ótimo.
-indesejável: (Andrew e Foster, 1983) introduziram o algoritmo ótimo.
-certo : Andrew e Foster introduziram o algoritmo ótimo [AF83].
-certo : Andrew e Foster introduziram o algoritmo ótimo (Andrew e Foster, 1983).
-certo : Andrew e Foster (1983) introduziram o algoritmo ótimo.
-\end{verbatim}
-\end{small}
-
-Uma prática recomendável na escrita de textos é descrever as legendas das
-figuras e tabelas em forma auto-contida: as legendas devem ser razoavelmente
-completas, de modo que o leitor possa entender a figura sem ler o texto onde a
-figura ou tabela é citada.  
-
-Apresentar os resultados de forma simples, clara e completa é uma tarefa que
-requer inspiração. Nesse sentido, o livro de \citet{tufte01:visualDisplay},
-\emph{The Visual Display of Quantitative Information}, serve de ajuda na
-criação de figuras que permitam entender e interpretar dados/resultados de forma
-eficiente.
+Pesquisa na área de Aprendizado de Reforço comumente adota jogos eletrônicos como o ambiente para testar seus algoritmos (?), já que estes proporcionam desafios complexos e bem definidos para a análise e comparação de algoritmos, em um ambiente totalmente controlável. Dentro destes, os jogos de estratégia em tempo real (RTS) se destacam por poder envolver um espaço de ação grande e mutável, grande conjunto de estados, temas de planejamento, informação imperfeita e recompensas distantes para as ações dos agentes. Conforme essa tendência, nesse trabalho utilizaremos como estudo de caso um jogo RTS bem simples, criado para a pesquisa de algoritmos de AR.
 

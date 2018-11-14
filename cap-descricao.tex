@@ -1,0 +1,110 @@
+% !TEX root = monografia.tex
+\chapter{O Problema}
+\label{cap:descricao}
+
+\section{Aprendizado de Reforço}
+
+Geralmente, os problemas da área são formulados como Processos de Decisão de Markov (MDP) finitos(?).
+Um Processo de Decisão de Markov é uma quíntupla $(S,A,T,R,\gamma)$(?), onde:
+\begin{itemize}
+    \item $S$ é o conjunto de estados (que representa o ambiente)
+    \item $A$ é o conjunto de ações que o agente pode tomar
+    \item $T: S \times S \times A \to [0, 1]$ representa a probabilidade de um novo estado $s'$ dados o estado atual $s$ e ação $a$
+    \item $R: S \times A \to \mathbb{R}$ a função de retorno
+    \item $\gamma \in [0, 1]$ é um fator que determina o a importância de retornos futuros comparados com retornos imediatos.   
+\end{itemize}
+
+Nesse trabalho, trataremos de um problema de \textit{informação imperfeita},
+onde o agente não poderá observar diretamente o estado $s$,
+só uma parte dele $o(s)$. 
+Além disso, temos um conjunto de estados chamado de \textit{estados terminais},
+onde a probabilidade de transição para qualquer outro estado é 0.
+
+O agente define uma \textit{política} $\pi: A \times o(S) \to [0, 1]$ 
+que representa a distribuição de probabilidade da escolha de uma ação em um dado estado $\pi(a | o(s))$.
+
+Assim temos um mecanismo para gerar amostras, 
+partindo de um estado $S_0$,
+selecionamos uma ação $A_0 \sim \pi(a | o(S_0))$,
+deixamos o agente observar $R_0 = R(S_0, A_0)$
+e selecionamos um estado $S_1 \sim T(s | S_0, A_0)$,
+a partir do qual o processo se repete,
+até alcançar um estado $S_T$ que seja terminal.
+Ao conjunto 
+$S_0, A_0, R_0, S_1, A_1, R_1, S_2, A_2, R_2, ..., S_T$,
+damos o nome de \textit{episódio}.
+
+O objetivo dos nossos agentes é, 
+através de suas observações dos episódios, 
+aprender uma política que maximiza o \textit{retorno descontado} $G_0$ onde:
+$G_t := R_t + \gamma R_{t + 1} + \gamma^2R_{t + 2} + ... = R_t + \gamma G_{t + 1}$.
+
+Será útil para nossa discussão definir a função \textit{valor} $v_{\pi}(s) = \mathbb{E}_{\pi}[G_t | S_t = s]$
+de um estado $s$, para a política $\pi$ em um tempo $t$ qualquer,
+e a função \textit{ação-valor} $q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t | S_t = s, A_t = a]$.
+
+Isso é porque muitos algoritmos de AR consistem em definir uma política,
+estimar a função valor ou ação-valor dessa política, e usá-lá para criar uma nova política,
+aumentando a probabilidade de visitar um estado quanto maior for o seu valor (nesse caso, é necessário também modelar o ambiente),
+ou aumentando a probabilidade de tomar ações quanto maior for a ação-valor.
+
+
+\section{Ambiente}
+
+O ambiente utilizado no trabalho foi o ELF (?).
+Criado para a pesquisa em IA, sua escolha propõe múltiplos benefícios: 
+proporciona todos os desafios característicos de jogos RTS,
+dispensa das complexidades irrelevantes para pesquisa que estão presentes em jogos destinados para o mercado,
+é integrado com uma framework de Aprendizado de Reforço (baseada em PyTorch (?)),
+faz um uso altamente eficiente dos recursos computacionais
+e, por último, proporciona alto grau de controle para o usuário.
+
+O jogo consiste de dois jogadores 
+disputando por recursos, 
+construindo unidades 
+e as controlando 
+com o objetivo final de destruir a base do adversário.
+Mais precisamente, 
+cada jogador começa com sua base em cantos opostos de um mapa quadricular,
+que contém fontes de recursos. 
+É importante ressaltar que os jogadores só tem visão do que está suficiente próximo de suas unidades 
+(e conhecimento da localização da base inimiga), isso significa que se trata de um problema de \textit{informação parcial}.
+
+A observação do estado é uma discretização do mapa em uma grid 20 x 20,
+e a informação é distribuída em múltiplos canais (nome herdado da área de processamento de imagens), o que significa que o estado é um cubo H x 20 x 20, onde cada matriz i x 20 x 20 contém um tipo de informação do mapa. Essas informações são:
+primeiro a posição de unidades de cada tipo, 
+depois o HP 
+e por fim um canal que representa as fontes de recursos.
+Note que a observação do estado respeita a \textit{fog-of-war}, isto é, oculta informação que não está na área de visão do jogador.
+
+As ações disponíveis para os agentes são as mesmas em todos os estados, e estão descritas na tabela~\ref{tab:acoes}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+    \hline
+    Comando              & Descrição                                                                                       \\
+    \hline
+    INATIVO              & Não faz nada                                                                                    \\
+    \hline
+    CONSTRÓI-TRABALHADOR & Se a base está inativa, constrói um trabalhador.                                                \\
+    \hline
+    CONSTRÓI-QUARTEL     & Move um trabalhador (coletando ou inativo) para um lugar vazio e constrói um quartel.           \\
+    \hline
+    CONSTRÓI-GLADIADOR   & Se existe um quartel inativo, constrói um gladiador.                                            \\
+    \hline
+    CONSTRÓI-TANQUE      & Se existe um quartel inativo, constrói um tanque.                                               \\
+    \hline
+    BATER-E-CORRER       & Se existem tanques, move eles em direção a base inimiga e ataca, fuja se forem contra atacados. \\
+    \hline
+    ATACAR               & Gladiadores e tanques atacam a base inimiga.                                                    \\
+    \hline
+    ATACAR EM ALCANCE    & Gladiadores e tanques atacam inimigos a vista.                                                  \\
+    \hline
+    TODOS A DEFESA       & Gladiadores e tanques atacar tropas inimigas perto da base ou da fonte de recursos.             \\
+    \hline
+\end{tabular}
+\end{center}
+\caption{Ações}
+\label{tab:acoes}
+\end{table}

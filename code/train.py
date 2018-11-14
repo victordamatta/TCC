@@ -5,6 +5,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from rlpytorch import *
 from random_agent import RandomAgent
+from qAgent import qAgent
+from a3c import A3CAgent
 import argparse
 
 def load_module(mod):
@@ -25,10 +27,12 @@ def load_environment(envs, num_models=None, overrides=dict(), defaults=dict(), *
 
 if __name__ == '__main__':
     stats = Stats("agent")
+    sampler = Sampler()
     runner = SingleProcessRun()
-    env, all_args = load_environment(os.environ, runner=runner, stats=stats)
+    env, all_args = load_environment(os.environ, runner=runner, stats=stats, sampler=sampler)
     stats.reset()
-    agent = RandomAgent(stats)
+    #agent = RandomAgent(stats)
+    agent = A3CAgent(sampler, stats)
 
     GC = env["game"].initialize()
 

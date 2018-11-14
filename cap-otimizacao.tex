@@ -1,0 +1,100 @@
+% !TEX root = monografia.tex
+\chapter{Algoritmos Actor-Critic}
+\label{cap:otimizacao}
+
+Os algoritmos de otimização que veremos em seguida funcionam unicamente na hipótese que temos $\mathcal{J}$ e $\pi$ diferenciáveis, logo poderemos aplicá-los no nosso modelo baseado em Redes Neurais.
+
+\section{REINFORCE}
+
+Comentamos no capítulo anterior que
+
+\begin{equation}
+    \nabla \mathcal{J}(\theta) 
+    \propto \mathbb{E}_{\pi} \Big[ G_t \frac{\nabla_{\theta} \pi(A_t | S_t, \theta)}{\pi(A_t | S_t, \theta)} \Big]
+\end{equation}
+
+E que isso sugere um algoritmo para achar um vetor $\theta$, chamado REINFORCE (?), que pode ser descrito como:
+
+\begin{equation}
+    \theta = \theta + \alpha \gamma^t G_t \frac{\nabla_{\theta} \pi(A_t | S_t, \theta)}{\pi(A_t | S_t, \theta)} 
+\end{equation}
+
+Onde $G_t$ é o retorno como sempre. Os parâmetros $\gamma$ e $\alpha$ são hiperparâmetros. O primeiro é o fator de desconto da definição do MDP. O segundo é chamado de \textit{taxa de aprendizado} (em inglês \textit{learning rate}). Um $\alpha$ muito pequeno deixa o aprendizado lento, porém um $\alpha$ perde a garantia de melhora da função objetivo. É comum diminuir o $\alpha$ com o número de iterações.
+
+Não existe consenso no número correto de iterações. Depois de muitas iterações, o gradiente tende a ficar cada vez menor, e a função objetivo permanece estável, o que pode significar que o algoritmo encontrou um ótimo local. Quando se faz múltiplos experimentos, é comum fixar um número de iterações entre eles.
+
+Esse algoritmo é próximo da teoria porém é relativamente lento na prática, principalmente pela variância no processo de treinamento, dado que as atualizações dependem totalmente dos episódios observados. Em seguida, faremos uma modificação do algoritmo que ataca esse problema.
+
+\section{Actor-Critic}
+
+Uma modificação relativamente natural do algoritmo REINFORCE é tentar aproximar a função ação-valor na fórmula, como em Sutton en al (?):
+
+\begin{equation}
+    \nabla \mathcal{J}(\theta) 
+    \propto \mathbb{E}_{\pi} \Big[ q_{\pi}(S_t, A_t) \frac{\nabla_{\theta} \pi(A_t | S_t, \theta)}{\pi(A_t | S_t, \theta)} \Big]
+\end{equation}
+
+Daí surge a classe de algoritmos \textit{Actor-Critic} (?). A versão que exploraremos é a base do algoritmo A3C, que veremos em seguida, e utiliza como aproximação de $q_{\pi}(S_t, A_t)$ a expressão $R_{t} + \gamma \hat{v}_{\pi, \mu}(S_{t+1}) - \hat{v}_{\pi, \mu}(S_t)$ onde $\hat{v}_{\pi, \mu}$ é uma aproximação da função valor (aproximação que vêm do fato que $q_{\pi}(S_t, A_t) = \mathbb{E}_{\pi}[R_{t} + \gamma v_{\pi}(S_{t+1})|S_t, A_t]$ (?) e não mudamos a esperança subtraindo da aproximação uma função que depende somente do estado (?)), parametrizada por $\mu$. Nos parágrafos em seguida, escreveremos $\hat{v}_{\pi, \mu}$ como $\hat{v}_\mu$.
+
+Vale notar que o valor de um estado terminal deve ser 0, pois o jogo acabando, o valor esperado das recompensas futuras é 0.
+
+\begin{algorithm}
+\caption{Actor-Critic}\label{ac}
+\begin{algorithmic}[1]
+\Procedure{Actor-Critic}{$\pi, \hat{v}, \alpha_\theta, \alpha_\mu$}
+\State Inicialize $\theta$ e $\mu$
+\While{$true$}\Comment{Não há previsão teórica para o ponto de parada}
+    \State $S\gets S_0$
+    \State $I\gets 1$
+    \While{$S$ não é terminal}
+        \State $A \sim \pi_{\theta}(\cdot|S)$
+        \State Tome a ação $A$, observando $R$ e $S'$
+        \State $\delta\gets R + \gamma \hat{v}_{\mu}(S') - \hat{v}_{\mu}(S)$
+        \State $\mu\gets \mu + \alpha_\mu I \delta \nabla_{\mu}\hat{v}_\mu(S)$
+        \State $\theta\gets \theta + \alpha_\theta I \delta \nabla_{\theta}\ln \pi_\theta(A | S)$
+        \Comment{Aqui usando a identidade que $\nabla \ln f = \frac{\nabla f}{f}$ }
+        \State $I\gets \gamma I$
+        \State $S\gets S'$
+    \EndWhile
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+A otimização da função \hat{v} é chamada de TD(0) de subgradiente (?). A ideia é minimizar o erro quadrático da estimação do valor $(v_\pi(S_i) - \hat{v}_{\mu'}(S_i))^2$, utilizando como estimação de $v_\pi(S_i)$ a expressão $R + \gamma \hat{v}_{\mu}(S')$ e realizando descida de gradiente. Porém ao invés de gradiente é utilizado o subgradiente, pois é ignorado o efeito do parâmetro $\mu$ no alvo da otimização.
+
+\section{A3C}
+
+O algoritmo A3C, de \textit{Asynchronous Advantage Actor-Critic} (?), é uma modificação do Actor-Critic que usa fortemente paralelismo para diversificar a experiência do agente a cada atualização dos parâmetros (o que deixa o treinamento mais estável) e usufruir totalmente de processadores multi-core, por esses motivos, o treinamento com o algoritmo A3C tende a ser significativamente mais rápido do que com Actor-Critic puro.
+
+No código abaixo, $t_{max}$ é um hiperparâmetro que dita quão frequente é a atualização dos parâmetros globais e $T_{max}$ é outro hiperparâmetro que indica o número total de atualizações dos parâmetros.
+
+\begin{algorithm}
+\caption{A3C - pseudocódigo para cada thread}\label{ac}
+\begin{algorithmic}[1]
+\Procedure{A3C}{$\pi, \hat{v}$}
+\State Assuma que existem parâmetros globais $\theta$ e $\mu$ e um contador global $T = 0$
+\State Inicialize um contador da thread $t\gets 1$
+\Repeat
+    \State Inicialize gradientes $d\theta\gets 0$ e $d\mu\gets 0$
+    \State Sincronize parâmetros da thread $\theta'\gets \theta$ e $\mu'\gets \mu$ 
+    \State $t_{start}\gets t$
+    \State Recolha estado $S_t$
+    \Repeat
+        \State $A_t \sim \pi_{\theta'}(\cdot|S_t)$
+        \State Tome a ação $A_t$, observando $R_t$ e $S_{t+1}$
+        \State $t\gets t + 1$
+        \State $T\gets T + 1$
+    \Until $S_t$ é terminal ou $t - t_{start} = t_{max}$
+    \State $R\gets \hat{v}_{\mu'}(S_t)$
+    \For {$i \in \{t-1, ..., t_{start}\}$}
+        \State $R\gets R_i + \gamma R$
+        \State $d\mu\gets d\mu + \nabla_{\mu'}(R - \hat{v}_{\mu'}(S_i))^2$
+        \State $d\theta\gets d\theta + (R - \hat{v}_{\mu'}(S_i))\nabla_{\theta'}\ln \pi_{\theta'}(A_i | S_i)$
+        \Comment{Novamente $\nabla \ln f = \frac{\nabla f}{f}$}
+    \EndFor
+    \State Atualize $\theta$ e $\mu$ com os gradientes $d\theta$ e $d\mu$
+\Until $T > T_{max}$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
